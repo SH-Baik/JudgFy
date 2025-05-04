@@ -15,20 +15,23 @@ if st.button("💾 판단 구조화 및 저장"):
         # 판단 구조화
         result = extract_decision_elements(user_input)
 
-        # 기존 판단 불러오기
-        if DATA_PATH.exists():
-            with open(DATA_PATH, "r", encoding="utf-8") as f:
-                history = json.load(f)
+        # 저장 또는 에러 처리
+        if "error" in result:
+            st.error("❌ GPT 판단 구조화 중 오류 발생!")
+            st.json(result)
         else:
-            history = []
+            if DATA_PATH.exists():
+                with open(DATA_PATH, "r", encoding="utf-8") as f:
+                    history = json.load(f)
+            else:
+                history = []
 
-        # 저장
-        history.append(result)
-        with open(DATA_PATH, "w", encoding="utf-8") as f:
-            json.dump(history, f, ensure_ascii=False, indent=2)
+            history.append(result)
+            with open(DATA_PATH, "w", encoding="utf-8") as f:
+                json.dump(history, f, ensure_ascii=False, indent=2)
 
-        st.success("✅ 판단이 저장되었습니다!")
-        st.json(result)
+            st.success("✅ 판단이 저장되었습니다!")
+            st.json(result)
     else:
         st.warning("⚠️ 입력 내용을 작성해 주세요.")
 
