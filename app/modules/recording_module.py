@@ -6,6 +6,9 @@ import json
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+# ✅ 여기에 삽입!
+print("🔑 현재 API Key:", openai.api_key)
+
 def extract_decision_elements(text):
     prompt = f"""
 다음 사용자가 입력한 상황을 다음 구조로 정리해주세요:
