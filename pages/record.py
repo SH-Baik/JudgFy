@@ -1,7 +1,7 @@
 import streamlit as st
 import json
 from pathlib import Path
-from utils.recording_module import extract_decision_elements  # ✅ 경로 수정
+from app.modules.recording_module import extract_decision_elements  # ✅ 경로 수정
 
 # ✅ 절대경로로 안전하게 처리
 BASE_DIR = Path(__file__).resolve().parent.parent
