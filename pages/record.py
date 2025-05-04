@@ -1,8 +1,7 @@
-# app/pages/record.py
 import streamlit as st
 import json
-from pathlib import Path
 from modules.recording_module import extract_decision_elements
+from pathlib import Path
 
 DATA_PATH = Path("data/judgments.json")
 
@@ -27,20 +26,23 @@ if st.button("💾 판단 구조화 및 저장"):
                 history = []
 
             history.append(result)
+
             with open(DATA_PATH, "w", encoding="utf-8") as f:
                 json.dump(history, f, ensure_ascii=False, indent=2)
 
             st.success("✅ 판단이 저장되었습니다!")
             st.json(result)
-    else:
-        st.warning("⚠️ 입력 내용을 작성해 주세요.")
 
-# 저장 기록 출력
+# 판단 기록 보기
+st.markdown("---")
+st.markdown("📂 **저장된 판단 기록**")
+
 if DATA_PATH.exists():
-    st.markdown("---")
-    st.subheader("📂 저장된 판단 기록")
     with open(DATA_PATH, "r", encoding="utf-8") as f:
-        history = json.load(f)
+        try:
+            history = json.load(f)
+        except json.JSONDecodeError:
+            history = []
 
     if isinstance(history, list) and history:
         for i, record in enumerate(reversed(history[-5:]), 1):
@@ -49,6 +51,6 @@ if DATA_PATH.exists():
             st.markdown(f"📌 **기준:** {', '.join(record.get('criteria', []))}")
             st.markdown("---")
     else:
-        st.info("아직 저장된 판단 기록이 없습니다.")
-
-
+        st.info("저장된 판단 기록이 없습니다.")
+else:
+    st.info("아직 판단이 저장되지 않았습니다.")
