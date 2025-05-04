@@ -42,9 +42,13 @@ if DATA_PATH.exists():
     with open(DATA_PATH, "r", encoding="utf-8") as f:
         history = json.load(f)
 
-    for i, record in enumerate(reversed(history[-5:]), 1):
-        st.markdown(f"**{i}) 상황:** {record.get('situation', '')}")
-        st.markdown(f"➡️ 결정: {record.get('decision', '')}")
-        st.markdown(f"🔎 기준: {', '.join(record.get('criteria', []))}")
-        st.markdown("---")
+    if isinstance(history, list) and history:
+        for i, record in enumerate(reversed(history[-5:]), 1):
+            st.markdown(f"**{i}️⃣ 상황:** {record.get('situation', '')}")
+            st.markdown(f"🧠 **판단:** {record.get('decision', '')}")
+            st.markdown(f"📌 **기준:** {', '.join(record.get('criteria', []))}")
+            st.markdown("---")
+    else:
+        st.info("아직 저장된 판단 기록이 없습니다.")
+
 
