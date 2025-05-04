@@ -25,9 +25,14 @@ def extract_decision_elements(text):
         temperature=0.3,
     )
     content = response['choices'][0]['message']['content']
-    try:
-        import json
-        result = json.loads(content)
-    except Exception:
-        result = {"error": "GPT 응답 파싱 실패", "raw": content}
-    return result
+try:
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.3
+    )
+    content = response['choices'][0]['message']['content']
+    import json
+    result = json.loads(content)
+except Exception as e:
+    result = {"error": str(e)}
