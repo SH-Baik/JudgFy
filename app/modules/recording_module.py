@@ -7,21 +7,12 @@ from dotenv import load_dotenv
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# 현재 API Key 출력 (디버깅용)
+# 디버깅용 출력
 print("🔑 현재 API Key:", openai.api_key)
 
+MODEL = "gpt-4o"  # 또는 "gpt-3.5-turbo"
+
 def extract_decision_elements(text):
-    """
-    사용자가 입력한 판단 상황을 구조화된 JSON으로 반환하는 함수
-    반환 구조:
-    {
-        "situation": "...",
-        "options": ["...", "..."],
-        "criteria": ["...", "..."],
-        "decision": "...",
-        "reflection": "..."
-    }
-    """
     prompt = f"""
 다음 사용자가 입력한 상황을 다음 구조로 정리해주세요:
 
@@ -39,22 +30,29 @@ def extract_decision_elements(text):
 
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-4o",  # 또는 "gpt-3.5-turbo"
+            model=MODEL,
             messages=[
                 {"role": "system", "content": "당신은 사용자의 판단을 구조화해주는 분석가입니다."},
                 {"role": "user", "content": prompt}
             ],
             temperature=0.3
         )
-        content = response["choices"][0]["message"]["content"]
 
-        # 안전한 JSON 파싱 시도
-        result = json.loads(content)
-        return result
+        choices = response.get("choices", [])
+        if choices and "message" in choices[0] and "content" in choices[0]["message"]:
+            content = choices[0]["message"]["content"]
+        else:
+            return {"error": "Invalid response structure", "raw": str(response)}
+
+        try:
+            result = json.loads(content)
+            return result
+        except json.JSONDecodeError as je:
+            return {"error": f"JSONDecodeError: {str(je)}", "raw": content}
 
     except Exception as e:
-        # 오류가 발생한 경우에도 내용 추적
         return {
             "error": str(e),
             "raw": content if 'content' in locals() else "No content"
         }
+
