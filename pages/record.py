@@ -1,23 +1,24 @@
-import streamlit as st
-import json
-from pathlib import Path
+# 🔹 1단계: sys.path 설정 (맨 위에 넣어야 함)
 import sys
+from pathlib import Path
 
-# ✅ 모듈 경로 설정 (프로젝트 루트 기준으로 app/modules 접근 가능하게)
-sys.path.append(str(Path(__file__).resolve().parents[1] / "app"))
+BASE_DIR = Path(__file__).resolve().parents[1]  # JudgFy 폴더까지 올라감
+sys.path.append(str(BASE_DIR / "app"))          # app 폴더를 import 경로에 추가
 
-# ✅ 판단 구조화 모듈 import
+# 🔹 2단계: 이제 modules 안의 모듈 import 가능
 from modules.recording_module import extract_decision_elements
 
-# ✅ 데이터 저장 경로
+# 🔹 3단계: 나머지 전체 streamlit 코드 (아래 이어짐)
+import streamlit as st
+import json
+
 DATA_PATH = Path("data/judgments.json")
 
 st.title("💡 JudgFy - 판단 기록 & 추론")
 
-# ✅ 사용자 입력
+# 입력
 user_input = st.text_area("💬 판단 상황을 자연스럽게 입력하세요:", height=150)
 
-# ✅ 판단 구조화 및 저장
 if st.button("💾 판단 구조화 및 저장"):
     if user_input.strip():
         result = extract_decision_elements(user_input)
@@ -26,7 +27,6 @@ if st.button("💾 판단 구조화 및 저장"):
             st.error("❌ GPT 판단 구조화 중 오류 발생!")
             st.json(result)
         else:
-            # 기존 파일 불러오기 (없거나 형식 문제 시 빈 리스트로 초기화)
             if DATA_PATH.exists():
                 with open(DATA_PATH, "r", encoding="utf-8") as f:
                     try:
@@ -46,7 +46,7 @@ if st.button("💾 판단 구조화 및 저장"):
             st.success("✅ 판단이 저장되었습니다!")
             st.json(result)
 
-# ✅ 판단 기록 보기
+# 판단 기록 보기
 st.markdown("---")
 st.markdown("📂 **저장된 판단 기록**")
 
