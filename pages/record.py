@@ -1,22 +1,15 @@
-# 🔹 1단계: sys.path 설정 (맨 위에 넣어야 함)
-import sys
-from pathlib import Path
-
-BASE_DIR = Path(__file__).resolve().parents[1]  # JudgFy 폴더까지 올라감
-sys.path.append(str(BASE_DIR / "app"))          # app 폴더를 import 경로에 추가
-
-# 🔹 2단계: 이제 modules 안의 모듈 import 가능
-from modules.recording_module import extract_decision_elements
-
-# 🔹 3단계: 나머지 전체 streamlit 코드 (아래 이어짐)
 import streamlit as st
 import json
+from pathlib import Path
+from utils.recording_module import extract_decision_elements  # 경로 조정 필요
 
-DATA_PATH = Path("data/judgments.json")
+# 경로 보정: record.py가 pages 폴더 안에 있으므로 상위 디렉토리 기준
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_PATH = BASE_DIR / "data" / "judgments.json"
 
 st.title("💡 JudgFy - 판단 기록 & 추론")
 
-# 입력
+# 입력 받기
 user_input = st.text_area("💬 판단 상황을 자연스럽게 입력하세요:", height=150)
 
 if st.button("💾 판단 구조화 및 저장"):
