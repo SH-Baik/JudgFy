@@ -26,10 +26,10 @@ def extract_decision_elements(text):
 
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.3
-        )
+        model="gpt-4o",  # 또는 gpt-3.5-turbo
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.3
+    )
         content = response["choices"][0]["message"]["content"]
         result = json.loads(content)
     except Exception as e:
