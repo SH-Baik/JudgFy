@@ -41,10 +41,12 @@ if DATA_PATH.exists():
     with open(DATA_PATH, "r", encoding="utf-8") as f:
         try:
             history = json.load(f)
+            if not isinstance(history, list):  # dict 등 비정상 구조 방지
+                history = []
         except json.JSONDecodeError:
             history = []
 
-    if isinstance(history, list) and history:
+    if history:
         for i, record in enumerate(reversed(history[-5:]), 1):
             st.markdown(f"**{i}️⃣ 상황:** {record.get('situation', '')}")
             st.markdown(f"🧠 **판단:** {record.get('decision', '')}")
